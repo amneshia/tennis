@@ -104,7 +104,7 @@ randPlayer = do
 present :: String -> String -> Match -> String
 present p1Name p2Name (Ongoing (Score point1 point2)) =
   p1Name <> ": " <> show point1 <> " - " <> p2Name <> ": " <> show point2
-present p1Name p2Name (Ongoing Deuce) = "Deuce"
+present p1Name p2Name (Ongoing Deuce) = "Deuce!"
 present p1Name p2Name (Ongoing (Advantage p)) = advPlayer <> " has the advantage!"
   where
     advPlayer = playerName p1Name p2Name p
@@ -113,7 +113,5 @@ present p1Name p2Name (Over p) = winner <> " wins!"
     winner = playerName p1Name p2Name p
 
 playerName :: String -> String -> Player -> String
-playerName p1Name p2Name p =
-  case p of
-    P1 -> p1Name
-    P2 -> p2Name
+playerName p1Name _ P1 = p1Name
+playerName _ p2Name P2 = p2Name
