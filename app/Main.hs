@@ -5,5 +5,5 @@ import           Tennis       (matchResultN, tennisMatchPretty,Player(..))
 
 main :: IO ()
 main = do
-  matchStates <- tennisMatchPretty "Nadal" "Federrer"
+  matchStates <- tennisMatchPretty "Nadal" "Federer"
   putStrLn . foldl (<>) "" . intersperse "\n" $ matchStates
