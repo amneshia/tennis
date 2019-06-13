@@ -1,7 +1,7 @@
 module Main where
 
 import           Data.List (group, groupBy, intersperse)
-import           Tennis       (matchResultN, tennisMatchPretty,Player(..))
+import           Tennis    (tennisMatchPretty)
 
 main :: IO ()
 main = do

@@ -1,7 +1,5 @@
 module Tennis
   ( tennisMatchPretty
-  , matchResultN
-  , Player(..)
   ) where
 
 import           System.Random (randomRIO)
@@ -37,24 +35,8 @@ tennisMatchPretty :: String -> String -> IO [String]
 tennisMatchPretty p1 p2 = do
   states <- play initialScore
   return . fmap (present p1 p2) $ states
-
-matchResult :: IO Player
-matchResult = do
-  states <- play initialScore
-  return $
-    case last states of
-      Over p -> p
-      _ -> error "Every match's terminal state must be of constructor 'Over @winner@'"
-
-matchResultN :: Int -> IO [Player]
-matchResultN x
-  | x <= 1 = fmap (: []) matchResult
-matchResultN x = do
-  r <- matchResultN 1
-  r' <- matchResultN (x - 1)
-  return $ r ++ r'
-
-initialScore = Score Zero Zero
+  where
+    initialScore = Score Zero Zero
 
 play :: OngoingMatch -> IO [Match]
 play on = do
