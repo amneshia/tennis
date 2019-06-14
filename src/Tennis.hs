@@ -79,7 +79,7 @@ next (Advantage p) = do
 type RGenState a = State StdGen a
 
 genState :: RGenState Int
-genState = state (\gen -> randomR (0, 1) gen :: (Int, StdGen))
+genState = state $ randomR (0, 1)
 
 randomPlayerState :: RGenState Player
 randomPlayerState = fmap numToPlayer genState
