@@ -14,7 +14,7 @@ data Point
   | Fifteen
   | Thirty
   | Forty
-  deriving (Eq, Enum, Bounded)
+  deriving (Enum)
 
 instance Show Point where
   show Zero    = "0"
@@ -52,16 +52,12 @@ next (Score point1 point2) = do
   p <- randPlayer
   return $
     case (p, point1, point2) of
-      (P1, x, y)
-        | x == pred maxBound && y == maxBound -> Ongoing Deuce
-      (P2, x, y)
-        | x == maxBound && y == pred maxBound -> Ongoing Deuce
-      (P1, x, _)
-        | x == maxBound -> Over P1
-      (P2, _, y)
-        | y == maxBound -> Over P2
-      (P1, _, _) -> Ongoing $ Score (succ point1) point2
-      (P2, _, _) -> Ongoing $ Score point1 (succ point2)
+      (P1, Thirty, Forty) -> Ongoing Deuce
+      (P2, Forty, Thirty) -> Ongoing Deuce
+      (P1, Forty, _)      -> Over P1
+      (P2, _, Forty)      -> Over P2
+      (P1, _, _)          -> Ongoing $ Score (succ point1) point2
+      (P2, _, _)          -> Ongoing $ Score point1 (succ point2)
 next Deuce = do
   p <- randPlayer
   return . Ongoing . Advantage $ p
