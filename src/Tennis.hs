@@ -77,6 +77,7 @@ next (Advantage p) = do
       else Ongoing Deuce
 
 type RGenState a = State StdGen a
+
 randomPlayer :: RGenState Player
 randomPlayer = fmap numToPlayer genState
   where
@@ -86,9 +87,7 @@ randomPlayer = fmap numToPlayer genState
         then P1
         else P2
 
-{-
-  Presentation functions
--}
+-- | Presentation functions
 present :: String -> String -> Match -> String
 present p1Name p2Name (Ongoing (Score point1 point2)) =
   namePoint p1Name point1 <> " - " <> namePoint p2Name point2
