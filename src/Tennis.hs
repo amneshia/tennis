@@ -49,7 +49,7 @@ play on = do
 
 next :: OngoingMatch -> IO Match
 next (Score point1 point2) = do
-  p <- randPlayer
+  p <- randomPlayer
   return $
     case (p, point1, point2) of
       (P1, Thirty, Forty) -> Ongoing Deuce
@@ -59,20 +59,20 @@ next (Score point1 point2) = do
       (P1, _, _)          -> Ongoing $ Score (succ point1) point2
       (P2, _, _)          -> Ongoing $ Score point1 (succ point2)
 next Deuce = do
-  p <- randPlayer
+  p <- randomPlayer
   return . Ongoing . Advantage $ p
 next (Advantage p) = do
-  p' <- randPlayer
+  p' <- randomPlayer
   return $
     if p == p'
       then Over p
       else Ongoing Deuce
 
-randPlayer :: IO Player
-randPlayer = do
+randomPlayer :: IO Player
+randomPlayer = do
   num <- randomRIO (0, 1) :: IO Int
   return $
-    if num == 1
+    if num == 0
       then P1
       else P2
 
