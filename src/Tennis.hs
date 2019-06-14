@@ -1,8 +1,10 @@
 module Tennis
   ( tennisMatchPretty
+  , tennisMatch
   ) where
 
 import           System.Random (randomRIO)
+import Data.List (intersperse)
 
 data Player
   = P1
@@ -31,10 +33,17 @@ data Match
   = Ongoing OngoingMatch
   | Over Player
 
-tennisMatchPretty :: String -> String -> IO [String]
+tennisMatchPretty :: String -> String -> IO String
 tennisMatchPretty p1 p2 = do
-  states <- play initialScore
-  return . fmap (present p1 p2) $ states
+  states <- tennisMatch
+  return . foldl (<>) "\n" . intersperse "\n" . prettify $ states
+  where
+    initialScore = Score Zero Zero
+    presenter = present p1 p2
+    prettify = ("Start!" :) . fmap presenter
+
+tennisMatch :: IO [Match]
+tennisMatch = play initialScore
   where
     initialScore = Score Zero Zero
 
