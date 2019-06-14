@@ -66,9 +66,7 @@ next (Score point1 point2) = do
       (P2, _, Forty)      -> Over P2
       (P1, _, _)          -> Ongoing $ Score (succ point1) point2
       (P2, _, _)          -> Ongoing $ Score point1 (succ point2)
-next Deuce = do
-  p <- randomPlayer
-  return . Ongoing . Advantage $ p
+next Deuce = Ongoing . Advantage <$> randomPlayer
 next (Advantage p) = do
   p' <- randomPlayer
   return $
@@ -79,7 +77,7 @@ next (Advantage p) = do
 type RGenState a = State StdGen a
 
 randomPlayer :: RGenState Player
-randomPlayer = fmap numToPlayer genState
+randomPlayer = numToPlayer <$> genState
   where
     genState = state $ randomR (0, 1) :: RGenState Int
     numToPlayer num =
