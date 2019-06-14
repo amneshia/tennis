@@ -38,7 +38,6 @@ tennisMatchPretty p1 p2 = do
   states <- tennisMatch
   return . foldl (<>) "\n" . intersperse "\n" . prettify $ states
   where
-    initialScore = Score Zero Zero
     presenter = present p1 p2
     prettify = ("Start!" :) . fmap presenter
 
