@@ -42,7 +42,7 @@ tennisMatchPretty gen p1 p2 = foldl (<>) "\n" . intersperse "\n" . prettify $ st
     prettify = ("Start!" :) . fmap presenter
 
 tennisMatch :: StdGen -> [Match]
-tennisMatch = evalState (play initialScore)
+tennisMatch = evalState . play $ initialScore
   where
     initialScore = Score Zero Zero
 
@@ -57,7 +57,7 @@ play on = do
 
 next :: OngoingMatch -> RGenState Match
 next (Score point1 point2) = do
-  p <- randomPlayerState
+  p <- randomPlayer
   return $
     case (p, point1, point2) of
       (P1, Thirty, Forty) -> Ongoing Deuce
@@ -67,23 +67,20 @@ next (Score point1 point2) = do
       (P1, _, _)          -> Ongoing $ Score (succ point1) point2
       (P2, _, _)          -> Ongoing $ Score point1 (succ point2)
 next Deuce = do
-  p <- randomPlayerState
+  p <- randomPlayer
   return . Ongoing . Advantage $ p
 next (Advantage p) = do
-  p' <- randomPlayerState
+  p' <- randomPlayer
   return $
     if p == p'
       then Over p
       else Ongoing Deuce
 
 type RGenState a = State StdGen a
-
-genState :: RGenState Int
-genState = state $ randomR (0, 1)
-
-randomPlayerState :: RGenState Player
-randomPlayerState = fmap numToPlayer genState
+randomPlayer :: RGenState Player
+randomPlayer = fmap numToPlayer genState
   where
+    genState = state $ randomR (0, 1) :: RGenState Int
     numToPlayer num =
       if num == 0
         then P1
