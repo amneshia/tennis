@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 655f072b47e2b3de9911591bcfd401b5e8ed0b63dfd87e7925f9c4da9f13e75e
+-- hash: e67e62b4098065a56eda2cb501e2ef1b8d20d66df7d4c6fbe06b18fa76231142
 
 name:           tennis
 version:        0.1.0.0
@@ -34,6 +34,7 @@ library
       src
   build-depends:
       base >=4.7 && <5
+    , mtl
     , random
   default-language: Haskell2010
 
@@ -46,6 +47,7 @@ executable tennis-exe
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , mtl
     , random
     , tennis
   default-language: Haskell2010
@@ -60,6 +62,7 @@ test-suite tennis-test
   ghc-options: -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , mtl
     , random
     , tennis
   default-language: Haskell2010

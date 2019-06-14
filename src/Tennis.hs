@@ -3,8 +3,9 @@ module Tennis
   , tennisMatch
   ) where
 
-import           System.Random (randomRIO)
-import Data.List (intersperse)
+import           Control.Monad.State (State, evalState, state)
+import           Data.List           (intersperse)
+import           System.Random       (StdGen, randomR)
 
 data Player
   = P1
@@ -33,20 +34,19 @@ data Match
   = Ongoing OngoingMatch
   | Over Player
 
-tennisMatchPretty :: String -> String -> IO String
-tennisMatchPretty p1 p2 = do
-  states <- tennisMatch
-  return . foldl (<>) "\n" . intersperse "\n" . prettify $ states
+tennisMatchPretty :: StdGen -> String -> String -> String
+tennisMatchPretty gen p1 p2 = foldl (<>) "\n" . intersperse "\n" . prettify $ states
   where
+    states = tennisMatch gen
     presenter = present p1 p2
     prettify = ("Start!" :) . fmap presenter
 
-tennisMatch :: IO [Match]
-tennisMatch = play initialScore
+tennisMatch :: StdGen -> [Match]
+tennisMatch = evalState (play initialScore)
   where
     initialScore = Score Zero Zero
 
-play :: OngoingMatch -> IO [Match]
+play :: OngoingMatch -> RGenState [Match]
 play on = do
   s <- next on
   case s of
@@ -55,9 +55,9 @@ play on = do
       return $ s : ss
     Over _ -> return [s]
 
-next :: OngoingMatch -> IO Match
+next :: OngoingMatch -> RGenState Match
 next (Score point1 point2) = do
-  p <- randomPlayer
+  p <- randomPlayerState
   return $
     case (p, point1, point2) of
       (P1, Thirty, Forty) -> Ongoing Deuce
@@ -67,22 +67,27 @@ next (Score point1 point2) = do
       (P1, _, _)          -> Ongoing $ Score (succ point1) point2
       (P2, _, _)          -> Ongoing $ Score point1 (succ point2)
 next Deuce = do
-  p <- randomPlayer
+  p <- randomPlayerState
   return . Ongoing . Advantage $ p
 next (Advantage p) = do
-  p' <- randomPlayer
+  p' <- randomPlayerState
   return $
     if p == p'
       then Over p
       else Ongoing Deuce
 
-randomPlayer :: IO Player
-randomPlayer = do
-  num <- randomRIO (0, 1) :: IO Int
-  return $
-    if num == 0
-      then P1
-      else P2
+type RGenState a = State StdGen a
+
+genState :: RGenState Int
+genState = state (\gen -> randomR (0, 1) gen :: (Int, StdGen))
+
+randomPlayerState :: RGenState Player
+randomPlayerState = fmap numToPlayer genState
+  where
+    numToPlayer num =
+      if num == 0
+        then P1
+        else P2
 
 {-
   Presentation functions
